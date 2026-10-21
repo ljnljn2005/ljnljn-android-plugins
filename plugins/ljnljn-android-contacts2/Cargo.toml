@@ -1,31 +1,30 @@
 [package]
-name = "ljnljn-android-contacts2-calls-6c1a4f83"
+name = "ljnljn-android-contacts2"
 version = "0.1.0"
 edition = "2021"
 license = "AGPL-3.0-only"
-description = "LovelyCarve 文件分析器：只读统计 Android contacts2.db 的 calls 表通话记录"
+description = "LovelyCarve LPP v2 analyzer: read-only Android contacts2.db calls table statistics"
 publish = false
 
 [lib]
-# cdylib 供 LovelyCarve 宿主加载；rlib 让 `cargo test` 能链接同一份代码。
-name = "ljnljn_kb_android_contacts2_calls_6c1a4f83"
+name = "ljnljn_android_contacts2"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-# 任务书指定的共享官方 SDK（name = "lovelycarve-plugin"），不下载第二份。
-lovelycarve-plugin = { path = "../../sdk-v1/sdk" }
-# bundled：把 SQLite 编进插件，运行时不需要目标机安装 sqlite3。
+lovelycarve-plugin = { path = "../../sdk-v2/sdk" }
+# bundled: SQLite is compiled into the plugin, so the target machine needs no
+# sqlite3. The database is opened read-only through SQLITE_OPEN_READ_ONLY.
 rusqlite = { version = "0.32.1", features = ["bundled"] }
 
+[dev-dependencies]
+lovelycarve-plugin = { path = "../../sdk-v2/sdk", features = ["testing"] }
+
 [lints.rust]
-# MSVC link.exe 会为每个 DLL 输出 import library 提示。
 linker_messages = "allow"
 
 [lints.clippy]
 uninlined_format_args = "warn"
 
-# 本工程位于 carve-plugins/ 目录树内，显式声明自己是独立 workspace 根，
-# 避免被上层 Cargo.toml 的 workspace 成员列表意外纳入。
 [workspace]
 
 [workspace.package]

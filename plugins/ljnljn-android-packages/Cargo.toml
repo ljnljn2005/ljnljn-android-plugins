@@ -1,35 +1,26 @@
-# 独立的 LovelyCarve file_analyzer 插件工程：解析 Android `packages.xml`。
-#
-# 依赖只有两类：
-# * 任务书指定的共享 SDK crate（相对路径写死，不复制、不下载第二份）；
-# * quick-xml 0.41（本机 cargo 缓存已有 0.41.0 与 memchr，可离线 --locked 构建）。
-#
-# 本目录同时是 Cargo workspace 根。SDK 使用 license.workspace = true，
-# 其 license 由 SDK 自己所在的官方插件工作区提供；这里只声明空的 [workspace]，
-# 让本工程不落进仓库上层可能存在的 workspace。
 [package]
-name = "ljnljn-android-packages-xml-2d5e9b71"
+name = "ljnljn-android-packages"
 version = "0.1.0"
 edition = "2021"
-description = "LovelyCarve file_analyzer: parse Android packages.xml (last-platform-version + package inventory)"
+license = "AGPL-3.0-only"
+description = "LovelyCarve LPP v2 analyzer: Android packages.xml inventory (LPP v2 port of the v1 file analyzer)"
 publish = false
 
 [lib]
-name = "ljnljn_kb_android_packages_xml_2d5e9b71"
-crate-type = ["cdylib"]
+name = "ljnljn_android_packages"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-lovelycarve-plugin = { path = "../../sdk-v1/sdk" }
-# 严格 XML 事件解析（声明/注释/命名空间前缀/自闭合/属性转义/标签配对）。
-# 默认 feature 为空，不引入 encoding_rs/serde 等额外依赖。
+lovelycarve-plugin = { path = "../../sdk-v2/sdk" }
+# Strict event-based XML parsing (declaration, comments, namespace prefixes,
+# self-closing tags, attribute escaping, tag pairing). Default features stay
+# empty so no encoding/serde extras are pulled in.
 quick-xml = "0.41"
 
-[profile.release]
-# 与官方插件工作区一致：panic 在 C ABI 边界转成 LPP 错误，需要 unwind。
-panic = "unwind"
+[dev-dependencies]
+lovelycarve-plugin = { path = "../../sdk-v2/sdk", features = ["testing"] }
 
 [lints.rust]
-# MSVC link.exe 会为每个 DLL 报告生成的导入库。
 linker_messages = "allow"
 
 [lints.clippy]

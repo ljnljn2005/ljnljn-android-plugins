@@ -1,0 +1,311 @@
+{
+  "protocol": 2,
+  "plugin": "org.ljnljn.android-packages",
+  "sdk": "0.2.0",
+  "analyzers": [
+    "packages"
+  ],
+  "filesystems": [],
+  "records": [
+    {
+      "type": "profile.fact",
+      "label": "检材画像",
+      "title": "{key}",
+      "fields": [
+        {
+          "id": "key",
+          "label": "键",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "value",
+          "label": "值",
+          "kind": "json"
+        },
+        {
+          "id": "system",
+          "label": "系统",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "type": "android.packages.report",
+      "label": "packages.xml 解析报告",
+      "title": "{file}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "status",
+          "label": "状态",
+          "kind": "enum",
+          "choices": [
+            {
+              "id": "ok",
+              "label": "解析完成"
+            },
+            {
+              "id": "empty",
+              "label": "空文档"
+            },
+            {
+              "id": "not_packages",
+              "label": "根元素不是 packages"
+            },
+            {
+              "id": "bad_xml",
+              "label": "XML 错误"
+            },
+            {
+              "id": "unsupported_encoding",
+              "label": "编码不支持"
+            },
+            {
+              "id": "input_too_large",
+              "label": "超过大小上限"
+            }
+          ]
+        },
+        {
+          "id": "error_code",
+          "label": "错误代码",
+          "kind": "text"
+        },
+        {
+          "id": "error_message",
+          "label": "错误说明",
+          "kind": "text"
+        },
+        {
+          "id": "error_line",
+          "label": "错误行号",
+          "kind": "int"
+        },
+        {
+          "id": "error_offset",
+          "label": "错误偏移",
+          "kind": "int"
+        },
+        {
+          "id": "root_name",
+          "label": "根元素",
+          "kind": "text"
+        },
+        {
+          "id": "root_qname",
+          "label": "根元素限定名",
+          "kind": "text"
+        },
+        {
+          "id": "xml_decl",
+          "label": "XML 声明",
+          "kind": "text"
+        },
+        {
+          "id": "input_bytes",
+          "label": "输入字节数",
+          "kind": "size"
+        },
+        {
+          "id": "package_elements",
+          "label": "package 元素数",
+          "kind": "int"
+        },
+        {
+          "id": "updated_package_elements",
+          "label": "updated-package 元素数",
+          "kind": "int"
+        },
+        {
+          "id": "unique_packages",
+          "label": "唯一包名数",
+          "kind": "int"
+        },
+        {
+          "id": "duplicate_packages",
+          "label": "重复包名数",
+          "kind": "int"
+        },
+        {
+          "id": "output_packages",
+          "label": "输出的包记录数",
+          "kind": "int"
+        },
+        {
+          "id": "output_omitted",
+          "label": "未输出的包记录数",
+          "kind": "int"
+        },
+        {
+          "id": "unnamed_packages",
+          "label": "缺少 name 的包元素",
+          "kind": "int"
+        },
+        {
+          "id": "nested_package_elements",
+          "label": "嵌套的 package 元素",
+          "kind": "int"
+        },
+        {
+          "id": "ignored_root_children",
+          "label": "忽略的其他根子元素",
+          "kind": "int"
+        },
+        {
+          "id": "comments",
+          "label": "注释数",
+          "kind": "int"
+        },
+        {
+          "id": "doctype_count",
+          "label": "DOCTYPE 数",
+          "kind": "int"
+        },
+        {
+          "id": "namespace_declarations",
+          "label": "命名空间声明数",
+          "kind": "int"
+        },
+        {
+          "id": "header_elements",
+          "label": "last-platform-version 元素数",
+          "kind": "int"
+        },
+        {
+          "id": "header_conflict",
+          "label": "last-platform-version 冲突",
+          "kind": "bool"
+        },
+        {
+          "id": "limitations",
+          "label": "限制与覆盖说明",
+          "kind": "list"
+        }
+      ]
+    },
+    {
+      "type": "android.packages.platform",
+      "label": "Android 平台版本",
+      "title": "{file} · platform",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "internal",
+          "label": "internal",
+          "kind": "text"
+        },
+        {
+          "id": "external",
+          "label": "external",
+          "kind": "text"
+        },
+        {
+          "id": "fingerprint",
+          "label": "fingerprint",
+          "kind": "text"
+        },
+        {
+          "id": "line",
+          "label": "行号",
+          "kind": "int"
+        },
+        {
+          "id": "offset",
+          "label": "字节偏移",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "type": "android.packages.package",
+      "label": "Android 软件包",
+      "title": "{name}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "name",
+          "label": "包名",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "version",
+          "label": "版本",
+          "kind": "text"
+        },
+        {
+          "id": "code_path",
+          "label": "codePath",
+          "kind": "path"
+        },
+        {
+          "id": "installer",
+          "label": "安装器",
+          "kind": "text"
+        },
+        {
+          "id": "first_kind",
+          "label": "首见元素",
+          "kind": "enum",
+          "choices": [
+            {
+              "id": "package",
+              "label": "package"
+            },
+            {
+              "id": "updated_package",
+              "label": "updated-package"
+            }
+          ]
+        },
+        {
+          "id": "first_line",
+          "label": "首见行号",
+          "kind": "int"
+        },
+        {
+          "id": "first_offset",
+          "label": "首见字节偏移",
+          "kind": "int"
+        },
+        {
+          "id": "occurrences",
+          "label": "出现次数",
+          "kind": "int"
+        },
+        {
+          "id": "updated_occurrences",
+          "label": "以 updated-package 出现次数",
+          "kind": "int"
+        },
+        {
+          "id": "duplicate",
+          "label": "重复",
+          "kind": "bool"
+        },
+        {
+          "id": "conflicting_fields",
+          "label": "冲突字段",
+          "kind": "list"
+        }
+      ]
+    }
+  ],
+  "schema_hash": "fnv1a64:9de0b62569721e2c"
+}

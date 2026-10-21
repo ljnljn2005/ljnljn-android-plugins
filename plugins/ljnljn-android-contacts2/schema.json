@@ -1,0 +1,475 @@
+{
+  "protocol": 2,
+  "plugin": "org.ljnljn.android-contacts2",
+  "sdk": "0.2.0",
+  "analyzers": [
+    "contacts2_calls"
+  ],
+  "filesystems": [],
+  "records": [
+    {
+      "type": "profile.fact",
+      "label": "检材画像",
+      "title": "{key}",
+      "fields": [
+        {
+          "id": "key",
+          "label": "键",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "value",
+          "label": "值",
+          "kind": "json"
+        },
+        {
+          "id": "system",
+          "label": "系统",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.summary",
+      "label": "contacts2.db calls 概览",
+      "title": "{file}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "status",
+          "label": "状态",
+          "kind": "enum",
+          "choices": [
+            {
+              "id": "ok",
+              "label": "有通话记录"
+            },
+            {
+              "id": "empty_table",
+              "label": "表为空"
+            },
+            {
+              "id": "missing_table",
+              "label": "没有 calls 表"
+            },
+            {
+              "id": "view",
+              "label": "calls 是视图"
+            },
+            {
+              "id": "error",
+              "label": "数据库错误"
+            }
+          ]
+        },
+        {
+          "id": "table",
+          "label": "表名",
+          "kind": "text"
+        },
+        {
+          "id": "table_kind",
+          "label": "对象类型",
+          "kind": "text"
+        },
+        {
+          "id": "table_queried",
+          "label": "是否查询行数据",
+          "kind": "bool"
+        },
+        {
+          "id": "total_rows",
+          "label": "总行数",
+          "kind": "int"
+        },
+        {
+          "id": "id_null",
+          "label": "_id 为 NULL 行数",
+          "kind": "int"
+        },
+        {
+          "id": "id_non_integer",
+          "label": "_id 非整型行数",
+          "kind": "int"
+        },
+        {
+          "id": "id_duplicate_values",
+          "label": "_id 重复取值数",
+          "kind": "int"
+        },
+        {
+          "id": "distinct_rows",
+          "label": "去重后行数",
+          "kind": "int"
+        },
+        {
+          "id": "distinct_key",
+          "label": "去重键",
+          "kind": "list"
+        },
+        {
+          "id": "duplicate_rows",
+          "label": "重复行数",
+          "kind": "int"
+        },
+        {
+          "id": "number_count",
+          "label": "号码数",
+          "kind": "int"
+        },
+        {
+          "id": "numbers_truncated",
+          "label": "号码明细被截断",
+          "kind": "bool"
+        },
+        {
+          "id": "type_count",
+          "label": "type 取值数",
+          "kind": "int"
+        },
+        {
+          "id": "types_truncated",
+          "label": "type 明细被截断",
+          "kind": "bool"
+        },
+        {
+          "id": "date_min_raw",
+          "label": "最早 date（原始值）",
+          "kind": "text"
+        },
+        {
+          "id": "date_max_raw",
+          "label": "最晚 date（原始值）",
+          "kind": "text"
+        },
+        {
+          "id": "date_min_utc",
+          "label": "最早 date（UTC 投影）",
+          "kind": "timestamp"
+        },
+        {
+          "id": "date_max_utc",
+          "label": "最晚 date（UTC 投影）",
+          "kind": "timestamp"
+        },
+        {
+          "id": "date_unit",
+          "label": "date 单位判定",
+          "kind": "enum",
+          "choices": [
+            {
+              "id": "seconds",
+              "label": "秒"
+            },
+            {
+              "id": "milliseconds",
+              "label": "毫秒"
+            },
+            {
+              "id": "mixed",
+              "label": "混合"
+            },
+            {
+              "id": "unknown",
+              "label": "未知"
+            }
+          ]
+        },
+        {
+          "id": "date_unit_basis",
+          "label": "date 单位判定依据",
+          "kind": "text"
+        },
+        {
+          "id": "date_null",
+          "label": "date 为 NULL 行数",
+          "kind": "int"
+        },
+        {
+          "id": "date_non_numeric",
+          "label": "date 非数值行数",
+          "kind": "int"
+        },
+        {
+          "id": "date_zero",
+          "label": "date = 0 行数",
+          "kind": "int"
+        },
+        {
+          "id": "date_negative",
+          "label": "date < 0 行数",
+          "kind": "int"
+        },
+        {
+          "id": "duration_total_raw",
+          "label": "duration 合计（原始单位）",
+          "kind": "int"
+        },
+        {
+          "id": "duration_null",
+          "label": "duration 为 NULL 行数",
+          "kind": "int"
+        },
+        {
+          "id": "duration_non_integer",
+          "label": "非整型 duration 行数",
+          "kind": "int"
+        },
+        {
+          "id": "name_nonempty",
+          "label": "name 非空行数",
+          "kind": "int"
+        },
+        {
+          "id": "cached_name_nonempty",
+          "label": "cached_name 非空行数",
+          "kind": "int"
+        },
+        {
+          "id": "columns_present",
+          "label": "存在的列",
+          "kind": "list"
+        },
+        {
+          "id": "columns_missing",
+          "label": "缺失的列",
+          "kind": "list"
+        },
+        {
+          "id": "journal_hint",
+          "label": "日志模式提示",
+          "kind": "text"
+        },
+        {
+          "id": "objects_seen",
+          "label": "库内表/视图",
+          "kind": "list"
+        },
+        {
+          "id": "objects_more",
+          "label": "库内对象被截断",
+          "kind": "bool"
+        },
+        {
+          "id": "limitations",
+          "label": "限制与覆盖说明",
+          "kind": "list"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.column",
+      "label": "calls 列检查",
+      "title": "{file} · {name}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "name",
+          "label": "列名",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "present",
+          "label": "是否存在",
+          "kind": "bool"
+        },
+        {
+          "id": "declared_type",
+          "label": "声明类型",
+          "kind": "text"
+        },
+        {
+          "id": "position",
+          "label": "列序号",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.number",
+      "label": "按号码统计",
+      "title": "{number}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "number",
+          "label": "号码（原始值）",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "raw_type",
+          "label": "号码原始类型",
+          "kind": "text"
+        },
+        {
+          "id": "truncated",
+          "label": "号码展示是否截断",
+          "kind": "bool"
+        },
+        {
+          "id": "call_count",
+          "label": "通话次数",
+          "kind": "int"
+        },
+        {
+          "id": "duration_total_raw",
+          "label": "总时长（原始单位）",
+          "kind": "int"
+        },
+        {
+          "id": "duration_non_integer",
+          "label": "非整型 duration 行数",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.type",
+      "label": "type 分布",
+      "title": "{type_raw}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "type_raw",
+          "label": "type 原始值",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "raw_type",
+          "label": "type 原始类型",
+          "kind": "text"
+        },
+        {
+          "id": "code",
+          "label": "type 数值",
+          "kind": "int"
+        },
+        {
+          "id": "label",
+          "label": "type 含义",
+          "kind": "text"
+        },
+        {
+          "id": "call_count",
+          "label": "通话次数",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.note",
+      "label": "统计说明",
+      "title": "{title}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "title",
+          "label": "标题",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "level",
+          "label": "级别",
+          "kind": "enum",
+          "choices": [
+            {
+              "id": "info",
+              "label": "信息"
+            },
+            {
+              "id": "low",
+              "label": "低"
+            },
+            {
+              "id": "medium",
+              "label": "中"
+            }
+          ]
+        },
+        {
+          "id": "detail",
+          "label": "说明",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.limitation",
+      "label": "限制与覆盖说明",
+      "title": "{text}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "index",
+          "label": "序号",
+          "kind": "int",
+          "key": true
+        },
+        {
+          "id": "text",
+          "label": "限制说明",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "type": "android.contacts2.error",
+      "label": "contacts2.db 读取失败",
+      "title": "{file}",
+      "fields": [
+        {
+          "id": "file",
+          "label": "文件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "code",
+          "label": "错误代码",
+          "kind": "text"
+        },
+        {
+          "id": "message",
+          "label": "错误说明",
+          "kind": "text"
+        }
+      ]
+    }
+  ],
+  "schema_hash": "fnv1a64:6077eac13890a950"
+}

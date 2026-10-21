@@ -1,36 +1,20 @@
+# LPP v2 package manifest. Labels are the Chinese defaults; translations live
+# in locales/<locale>.toml under stable keys.
 id = "org.ljnljn.android-contacts2"
 name = "Android contacts2.db 通话记录统计"
 version = "0.1.0"
-protocol_min = 1
-protocol_max = 1
-# emit_artifacts：返回 artifacts / findings；
-# file_materialize：用 File::materialize() 取得宿主临时副本，再用 rusqlite 只读打开。
-permissions = ["emit_artifacts", "file_materialize"]
+protocol = 2
+library = "ljnljn_android_contacts2"
+memory = "2GiB"
+# file_materialize: rusqlite needs a filesystem path, so the SDK materializes
+# one host-owned read-only copy and releases the lease when the run ends.
+permissions = ["file_materialize"]
 
-# ljnljn_kb_android_contacts2_calls_6c1a4f83.dll（Windows）/
-# libljnljn_kb_android_contacts2_calls_6c1a4f83.so（Linux），与 Cargo [lib].name 一致。
-# 解析的是不可信检材字节，保持默认的进程隔离。
-[library]
-path = "ljnljn_kb_android_contacts2_calls_6c1a4f83"
-isolation = "process"
-
-# 单文件分析：手动触发，不声明 auto，避免在不相关文件上自动运行。
-# contacts2.db 可能来自任意平台的检材卷，因此 platform = "all"。
-[task]
-type = "fileanalyzer"
-platform = "all"
-trigger = "manually"
-support = [
-  "只读查询 calls 表：_id、number、date、duration、type、name、cached_name（按存在列查询）",
-  "总行数与按 (number,date,type,duration) 去重后的行数",
-  "每个号码的通话次数与 duration 合计（原始单位）",
-  "date 最早/最晚原始值与秒/毫秒数量级判定依据（不换算绝对时间、不推断时区）",
-  "type 分布：1 来电 / 2 去电 / 3 未接 等，未知类型原样记录",
-  "缺表、缺列、空表、坏数据库时给出明确错误或零结果 + limitations，不 panic",
-]
-
-[[capabilities]]
-type = "file_analyzer"
-analyzer = "ljnljn.android-contacts2.file"
+[[analyzer]]
+id = "contacts2_calls"
+name = "contacts2.db calls 表统计"
+scope = "files"
 extensions = ["db", "sqlite"]
-priority = 10
+mime_types = ["application/vnd.sqlite3", "application/x-sqlite3"]
+trigger = "manual"
+category = "android"

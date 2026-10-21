@@ -1,32 +1,18 @@
+# LPP v2 package manifest. Labels are the Chinese defaults; translations live
+# in locales/<locale>.toml under stable keys.
 id = "org.ljnljn.android-packages"
 name = "Android packages.xml 软件包清单"
 version = "0.1.0"
-protocol_min = 1
-protocol_max = 1
-permissions = ["emit_artifacts"]
+protocol = 2
+library = "ljnljn_android_packages"
+memory = "512MiB"
+permissions = []
 
-# ljnljn_kb_android_packages_xml_2d5e9b71.dll，由本 crate 构建。
-# 解析不可信检材，保持 isolation = "process"（崩溃不带走主程序）。
-[library]
-path = "ljnljn_kb_android_packages_xml_2d5e9b71"
-isolation = "process"
-
-# 单文件分析：手动触发。只声明 .xml，避免在不相关文件上自动运行。
-[task]
-type = "fileanalyzer"
-platform = "all"
-trigger = "manually"
-support = [
-  "<packages> 根与 <last-platform-version internal/external/fingerprint>（属性名大小写不敏感）",
-  "枚举 <package> 与可选 <updated-package>，按包名去重并保留首见位置",
-  "输出包名、version、codePath、installer、首见字节偏移与行号",
-  "XML 声明、命名空间前缀、注释、自闭合标签、属性顺序与转义字符",
-  "重复包名、属性顺序变化、空文件、坏 XML 的明确状态与限制说明",
-]
-
-[[capabilities]]
-type = "file_analyzer"
-analyzer = "ljnljn.android-packages.file"
-display = "Android packages.xml 软件包清单"
+[[analyzer]]
+id = "packages"
+name = "Android packages.xml 软件包清单"
+scope = "files"
 extensions = ["xml"]
-priority = 10
+mime_types = ["application/xml", "text/xml"]
+trigger = "manual"
+category = "android"
