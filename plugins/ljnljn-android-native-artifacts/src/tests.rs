@@ -356,6 +356,89 @@ fn wifi_hotspot_reads_softap_xml() {
 }
 
 #[test]
+fn media_history_reads_sessions_playbacks_origins() {
+    let root = Root::new("media-history");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Media History",
+        &format!(
+            "CREATE TABLE playbackSession(last_updated_time_s INTEGER, origin_id INTEGER, url TEXT, \
+             position_ms INTEGER, duration_ms INTEGER, title TEXT, artist TEXT, album TEXT, source_title TEXT);\
+             CREATE TABLE playback(last_updated_time_s INTEGER, id INTEGER, origin_id INTEGER, url TEXT, \
+             watch_time_s INTEGER, has_audio INTEGER, has_video INTEGER);\
+             CREATE TABLE origin(last_updated_time_s INTEGER, id INTEGER, origin TEXT, \
+             aggregate_watchtime_audio_video_s INTEGER);\
+             INSERT INTO playbackSession VALUES({}, 7, 'https://example.com/v', 1000, 2000, 'Song', 'Artist', 'Album', 'Source');\
+             INSERT INTO playback VALUES({}, 1, 7, 'https://example.com/v', 30, 1, 0);\
+             INSERT INTO origin VALUES({}, 7, 'https://example.com', 30);",
+            WEBKIT_2024 / 1_000_000,
+            WEBKIT_2024 / 1_000_000,
+            WEBKIT_2024 / 1_000_000
+        ),
+    );
+    let run = root.evidence("android_media_history");
+    assert_eq!(run.count("mobile.artifact"), 3);
+    assert!(run
+        .of_type("mobile.artifact")
+        .iter()
+        .all(|record| record.text("time") == Some("2024-01-01T00:00:00Z")));
+}
+
+#[test]
+fn browser_auxiliary_stores_read_rows() {
+    let root = Root::new("browser-aux");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Shortcuts",
+        &format!(
+            "CREATE TABLE omni_box_shortcuts(id INTEGER PRIMARY KEY, last_access_time INTEGER, \
+             text TEXT, type INTEGER, transition INTEGER, url TEXT, fill_into_edit TEXT, \
+             contents TEXT, description TEXT, keyword TEXT, number_of_hits INTEGER);\
+             INSERT INTO omni_box_shortcuts VALUES(1, {WEBKIT_2024}, 'example', 1, 1, \
+             'https://example.com', '', '', '', '', 3);"
+        ),
+    );
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Network Action Predictor",
+        "CREATE TABLE network_action_predictor(user_text TEXT, url TEXT, number_of_hits INTEGER, \
+         number_of_misses INTEGER);\
+         INSERT INTO network_action_predictor VALUES('example', 'https://example.com', 3, 1);",
+    );
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/BrowsingTopicsState",
+        &format!(
+            "CREATE TABLE browsing_topics_api_usages(last_usage_time INTEGER, \
+             context_domain TEXT, hashed_context_domain TEXT, hashed_main_frame_host TEXT);\
+             INSERT INTO browsing_topics_api_usages VALUES({WEBKIT_2024}, 'example.com', 'h1', 'h2');"
+        ),
+    );
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Offline Pages/metadata/OfflinePages.db",
+        &format!(
+            "CREATE TABLE offlinepages_v1(creation_time INTEGER, last_access_time INTEGER, \
+             online_url TEXT, file_path TEXT, title TEXT, access_count INTEGER, file_size INTEGER);\
+             INSERT INTO offlinepages_v1 VALUES({WEBKIT_2024}, {WEBKIT_2024}, \
+             'https://example.com', '/data/offline', 'Offline', 2, 100);"
+        ),
+    );
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Web Data",
+        "CREATE TABLE payments_customer_data(customer_id TEXT);\
+         INSERT INTO payments_customer_data VALUES('customer-1');",
+    );
+
+    for (analyzer, artifact) in [
+        ("android_browser_shortcuts", "android_browser_shortcuts"),
+        ("android_network_action_predictor", "android_network_action_predictor"),
+        ("android_browsing_topics", "android_browsing_topics"),
+        ("android_offline_pages", "android_offline_pages"),
+        ("android_payments_customer", "android_payments_customer"),
+    ] {
+        let run = root.evidence(analyzer);
+        assert_eq!(run.count("mobile.artifact"), 1, "{analyzer}");
+        assert_eq!(run.of_type("mobile.artifact")[0].text("artifact"), Some(artifact));
+    }
+}
+
+#[test]
 fn mms_reads_seconds_timestamp_and_addresses() {
     let root = Root::new("mms");
     root.database(

@@ -135,6 +135,48 @@ trigger = "manual"
 category = "android"
 
 [[analyzer]]
+id = "android_media_history"
+name = "浏览器媒体播放历史（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_browser_shortcuts"
+name = "浏览器地址栏快捷项（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_network_action_predictor"
+name = "浏览器网络行为预测（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_browsing_topics"
+name = "浏览器 Topics 使用（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_offline_pages"
+name = "浏览器离线页面（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_payments_customer"
+name = "浏览器支付客户标识（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
 id = "android_accounts"
 name = "账号同步配置（检材）"
 scope = "evidence"

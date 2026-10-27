@@ -87,6 +87,30 @@ fn wifi_hotspot(run: &Run) -> Result<()> {
     hotspot::run_evidence(run)
 }
 
+fn media_history(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_MEDIA_HISTORY)
+}
+
+fn shortcuts(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_SHORTCUTS)
+}
+
+fn network_predictor(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_NETWORK_PREDICTOR)
+}
+
+fn browsing_topics(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_BROWSING_TOPICS)
+}
+
+fn offline_pages(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_OFFLINE_PAGES)
+}
+
+fn payments_customer(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_PAYMENTS_CUSTOMER)
+}
+
 fn accounts(run: &Run) -> Result<()> {
     xml::accounts_evidence(run)
 }
@@ -129,6 +153,12 @@ fn plugin() -> Plugin {
         .analyzer("android_credit_cards", credit_cards)
         .analyzer("android_firefox_cookies", firefox_cookies)
         .analyzer("android_wifi_hotspot", wifi_hotspot)
+        .analyzer("android_media_history", media_history)
+        .analyzer("android_browser_shortcuts", shortcuts)
+        .analyzer("android_network_action_predictor", network_predictor)
+        .analyzer("android_browsing_topics", browsing_topics)
+        .analyzer("android_offline_pages", offline_pages)
+        .analyzer("android_payments_customer", payments_customer)
         .analyzer("android_accounts", accounts)
         .analyzer("android_wifi", wifi)
         .analyzer("android_selected_databases", selected_databases)

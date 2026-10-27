@@ -700,6 +700,215 @@ pub static ANDROID_FIREFOX_COOKIES: SqlSpec = SqlSpec {
     }],
 };
 
+static MEDIA_HISTORY_SESSIONS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["playbackSession"],
+    sql: r#"
+SELECT last_updated_time_s AS last_updated, origin_id AS origin_id, url AS url,
+       position_ms AS position_ms, duration_ms AS duration_ms, title AS title,
+       artist AS artist, album AS album, source_title AS source_title
+FROM playbackSession ORDER BY last_updated_time_s ASC
+"#,
+}];
+
+static MEDIA_HISTORY_PLAYBACKS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["playback"],
+    sql: r#"
+SELECT last_updated_time_s AS last_updated, id AS playback_id, origin_id AS origin_id,
+       url AS url, watch_time_s AS watch_time_s, has_audio AS has_audio,
+       has_video AS has_video
+FROM playback ORDER BY last_updated_time_s ASC
+"#,
+}];
+
+static MEDIA_HISTORY_ORIGINS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["origin"],
+    sql: r#"
+SELECT last_updated_time_s AS last_updated, id AS origin_id, origin AS origin,
+       aggregate_watchtime_audio_video_s AS aggregate_watchtime
+FROM origin ORDER BY last_updated_time_s ASC
+"#,
+}];
+
+pub static ANDROID_MEDIA_HISTORY: SqlSpec = SqlSpec {
+    artifact: "android_media_history",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Media History",
+        "**/app_sbrowser/Default/Media History",
+        "**/app_opera/Media History",
+        "**/app_webview/Default/Media History",
+    ],
+    units: &[
+        SqlUnit {
+            label: "session",
+            variants: MEDIA_HISTORY_SESSIONS,
+            time_column: Some("last_updated"),
+            time_kind: TimeKind::WebkitSeconds,
+            key_columns: &["origin_id"],
+            title_columns: &["title", "url"],
+        },
+        SqlUnit {
+            label: "playback",
+            variants: MEDIA_HISTORY_PLAYBACKS,
+            time_column: Some("last_updated"),
+            time_kind: TimeKind::WebkitSeconds,
+            key_columns: &["playback_id"],
+            title_columns: &["url"],
+        },
+        SqlUnit {
+            label: "origin",
+            variants: MEDIA_HISTORY_ORIGINS,
+            time_column: Some("last_updated"),
+            time_kind: TimeKind::WebkitSeconds,
+            key_columns: &["origin_id"],
+            title_columns: &["origin"],
+        },
+    ],
+};
+
+static SHORTCUTS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["omni_box_shortcuts"],
+    sql: r#"
+SELECT rowid AS shortcut_id, last_access_time AS last_access, text AS text,
+       type AS match_type, transition AS transition, url AS url,
+       fill_into_edit AS fill_into_edit, contents AS contents,
+       description AS description, keyword AS keyword, number_of_hits AS hits
+FROM omni_box_shortcuts ORDER BY last_access_time ASC, rowid ASC
+"#,
+}];
+
+static NETWORK_PREDICTOR: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["network_action_predictor"],
+    sql: r#"
+SELECT rowid AS predictor_id, user_text AS user_text, url AS url,
+       number_of_hits AS hits, number_of_misses AS misses
+FROM network_action_predictor ORDER BY rowid ASC
+"#,
+}];
+
+static BROWSING_TOPICS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["browsing_topics_api_usages"],
+    sql: r#"
+SELECT rowid AS topic_id, last_usage_time AS last_usage,
+       context_domain AS context_domain,
+       hashed_context_domain AS hashed_context_domain,
+       hashed_main_frame_host AS hashed_main_frame_host
+FROM browsing_topics_api_usages ORDER BY last_usage_time ASC
+"#,
+}];
+
+static OFFLINE_PAGES: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["offlinepages_v1"],
+    sql: r#"
+SELECT rowid AS page_id, creation_time AS creation_time,
+       last_access_time AS last_access, online_url AS online_url,
+       file_path AS file_path, title AS title, access_count AS access_count,
+       file_size AS file_size
+FROM offlinepages_v1 ORDER BY creation_time ASC
+"#,
+}];
+
+static PAYMENTS_CUSTOMER: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["payments_customer_data"],
+    sql: r#"
+SELECT rowid AS customer_id, customer_id AS customer
+FROM payments_customer_data ORDER BY rowid ASC
+"#,
+}];
+
+pub static ANDROID_SHORTCUTS: SqlSpec = SqlSpec {
+    artifact: "android_browser_shortcuts",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Shortcuts",
+        "**/app_sbrowser/Default/Shortcuts",
+        "**/app_opera/Shortcuts",
+        "**/app_webview/Default/Shortcuts",
+    ],
+    units: &[SqlUnit {
+        label: "shortcut",
+        variants: SHORTCUTS,
+        time_column: Some("last_access"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["shortcut_id"],
+        title_columns: &["text", "url"],
+    }],
+};
+
+pub static ANDROID_NETWORK_PREDICTOR: SqlSpec = SqlSpec {
+    artifact: "android_network_action_predictor",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Network Action Predictor",
+        "**/app_sbrowser/Default/Network Action Predictor",
+        "**/app_opera/Network Action Predictor",
+        "**/app_webview/Default/Network Action Predictor",
+    ],
+    units: &[SqlUnit {
+        label: "predictor",
+        variants: NETWORK_PREDICTOR,
+        time_column: None,
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["predictor_id"],
+        title_columns: &["user_text", "url"],
+    }],
+};
+
+pub static ANDROID_BROWSING_TOPICS: SqlSpec = SqlSpec {
+    artifact: "android_browsing_topics",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/BrowsingTopicsState",
+        "**/app_sbrowser/Default/BrowsingTopicsState",
+        "**/app_webview/Default/BrowsingTopicsState",
+    ],
+    units: &[SqlUnit {
+        label: "usage",
+        variants: BROWSING_TOPICS,
+        time_column: Some("last_usage"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["topic_id"],
+        title_columns: &["context_domain", "hashed_context_domain"],
+    }],
+};
+
+pub static ANDROID_OFFLINE_PAGES: SqlSpec = SqlSpec {
+    artifact: "android_offline_pages",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db",
+        "**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db",
+        "**/app_webview/Default/Offline Pages/metadata/OfflinePages.db",
+    ],
+    units: &[SqlUnit {
+        label: "page",
+        variants: OFFLINE_PAGES,
+        time_column: Some("creation_time"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["page_id"],
+        title_columns: &["title", "online_url"],
+    }],
+};
+
+pub static ANDROID_PAYMENTS_CUSTOMER: SqlSpec = SqlSpec {
+    artifact: "android_payments_customer",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Web Data",
+        "**/app_sbrowser/Default/Web Data",
+        "**/app_opera/Web Data",
+        "**/app_webview/Default/Web Data",
+    ],
+    units: &[SqlUnit {
+        label: "customer",
+        variants: PAYMENTS_CUSTOMER,
+        time_column: None,
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["customer_id"],
+        title_columns: &["customer"],
+    }],
+};
+
 pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_SMS,
     &ANDROID_CALLS,
@@ -717,4 +926,10 @@ pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_LOGIN_DATA,
     &ANDROID_CREDIT_CARDS,
     &ANDROID_FIREFOX_COOKIES,
+    &ANDROID_MEDIA_HISTORY,
+    &ANDROID_SHORTCUTS,
+    &ANDROID_NETWORK_PREDICTOR,
+    &ANDROID_BROWSING_TOPICS,
+    &ANDROID_OFFLINE_PAGES,
+    &ANDROID_PAYMENTS_CUSTOMER,
 ];

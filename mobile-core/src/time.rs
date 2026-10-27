@@ -27,6 +27,8 @@ pub enum TimeKind {
     CocoaOrUnix,
     /// Microseconds since 1601-01-01 UTC (Chromium `visit_time`).
     WebkitMicros,
+    /// Seconds since 1601-01-01 UTC (Chromium Media History).
+    WebkitSeconds,
     /// Infer seconds / milliseconds / microseconds / nanoseconds by magnitude.
     Auto,
 }
@@ -58,6 +60,9 @@ pub fn convert(value: i64, kind: TimeKind) -> Option<Timestamp> {
                 (micros as u32) * 1_000,
             ))
         }
+        TimeKind::WebkitSeconds => Some(Timestamp::from_unix(
+            value.checked_sub(WEBKIT_EPOCH)?,
+        )),
         TimeKind::Auto => {
             let magnitude = value.unsigned_abs();
             if magnitude >= 100_000_000_000_000_000 {
@@ -117,8 +122,7 @@ mod tests {
     }
 
     #[test]
-    fn android_milliseconds_are_not_read_as_seconds() {
-        assert_eq!(
+    fn android_milliseconds_are_not_read_as_seconds() {        assert_eq!(
             convert(1_704_164_645_000, TimeKind::UnixMillis)
                 .unwrap()
                 .as_str()

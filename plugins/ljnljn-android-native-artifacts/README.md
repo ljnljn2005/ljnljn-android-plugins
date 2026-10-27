@@ -29,6 +29,12 @@ LovelyCarve **LPP v2** 插件：直接读取 Android 提取物中的核心应用
 | `android_credit_cards` | 浏览器 `Web Data` 的 `masked_credit_cards` | 卡名、网络、后四位、有效期、使用次数/时间 |
 | `android_firefox_cookies` | Firefox `cookies.sqlite` | 域、名称、值、路径、创建/访问时间 |
 | `android_wifi_hotspot` | `softap.conf`、`WifiConfigStoreSoftAp.xml` | 热点 SSID、口令、安全类型 |
+| `android_media_history` | 浏览器 `Media History` | 播放会话、播放记录、来源站点 |
+| `android_browser_shortcuts` | 浏览器 `Shortcuts` | 地址栏输入、匹配类型、URL、命中次数 |
+| `android_network_action_predictor` | `Network Action Predictor` | 输入文本、URL、命中/未命中次数 |
+| `android_browsing_topics` | `BrowsingTopicsState` | 使用时间、上下文域、哈希域/主机 |
+| `android_offline_pages` | `OfflinePages.db` | 创建/访问时间、在线 URL、文件路径、标题、大小 |
+| `android_payments_customer` | `Web Data` 的 `payments_customer_data` | 支付客户标识 |
 | `android_accounts` | `system/sync/accounts.xml` | 账号、类型、authority、enabled、syncable |
 | `android_wifi` | `WifiConfigStore.xml` | SSID、安全模式、预共享密钥、上次连接时间 |
 
