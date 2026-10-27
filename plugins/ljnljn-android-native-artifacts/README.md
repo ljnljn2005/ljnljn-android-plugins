@@ -17,6 +17,14 @@ LovelyCarve **LPP v2** 插件：直接读取 Android 提取物中的核心应用
 | `android_chrome_history` | Chrome/Opera/WebView 的 `History` | URL、标题、访问次数、末次访问 |
 | `android_whatsapp` | `msgstore.db` | 聊天 JID、方向、正文、类型、媒体路径、时间 |
 | `android_media` | `External.db`、三星 `media.db` | 文件名、路径、MIME、大小、拍摄/添加时间、尺寸、经纬度 |
+| `android_downloads` | `com.android.providers.downloads/.../downloads.db` | 标题、路径、MIME、大小、状态、时间 |
+| `android_cookies` | Chrome/Opera/WebView 的 `Cookies` | 域、名称、值、路径、创建/过期/访问时间 |
+| `android_autofill` | 浏览器 `Web Data` 的 `autofill` | 字段名、值、创建/最后使用时间 |
+| `android_calendar` | `com.android.providers.calendar/.../calendar.db` | 标题、起止、时区、地点、日历、组织者 |
+| `android_keep_notes` | `com.google.android.keep/databases/keep.db` | 标题、正文、创建/更新时间、修改人 |
+| `android_maps_places` | `gmm_myplaces.db` | 地点键、经纬度、时间 |
+| `android_top_sites` | 浏览器 `Top Sites` | URL、排名、标题、跳转 |
+| `android_chrome_bookmarks` | 浏览器 `Bookmarks` JSON | URL、名称、父目录、路径、添加时间 |
 | `android_accounts` | `system/sync/accounts.xml` | 账号、类型、authority、enabled、syncable |
 | `android_wifi` | `WifiConfigStore.xml` | SSID、安全模式、预共享密钥、上次连接时间 |
 

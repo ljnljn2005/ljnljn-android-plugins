@@ -9,10 +9,19 @@
     "android_chrome_history",
     "android_whatsapp",
     "android_media",
+    "android_downloads",
+    "android_cookies",
+    "android_autofill",
+    "android_calendar",
+    "android_keep_notes",
+    "android_maps_places",
+    "android_top_sites",
+    "android_chrome_bookmarks",
     "android_accounts",
     "android_wifi",
     "android_selected_databases",
-    "android_selected_xml"
+    "android_selected_xml",
+    "android_selected_json"
   ],
   "filesystems": [],
   "records": [

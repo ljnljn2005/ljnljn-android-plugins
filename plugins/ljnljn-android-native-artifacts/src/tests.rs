@@ -116,6 +116,162 @@ fn sms_read_body_address_and_millisecond_time() {
 }
 
 #[test]
+fn downloads_read_title_and_path() {
+    let root = Root::new("downloads");
+    root.database(
+        "data/data/com.android.providers.downloads/databases/downloads.db",
+        &format!(
+            "CREATE TABLE downloads(_id INTEGER PRIMARY KEY, lastmod INTEGER, title TEXT, \
+             description TEXT, uri TEXT, _data TEXT, mimetype TEXT, notificationpackage TEXT, \
+             current_bytes INTEGER, total_bytes INTEGER, status INTEGER, errorMsg TEXT, \
+             etag TEXT, is_visible_in_downloads_ui INTEGER, deleted INTEGER);\
+             INSERT INTO downloads VALUES(1, {UNIX_MS_2024}, 'file.pdf', '', 'https://example.com/f', \
+             '/sdcard/Download/file.pdf', 'application/pdf', 'com.android.chrome', 10, 10, 8, NULL, 'e', 1, 0);"
+        ),
+    );
+    let run = root.evidence("android_downloads");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "path").and_then(Value::as_str),
+        Some("/sdcard/Download/file.pdf")
+    );
+}
+
+#[test]
+fn cookies_read_host_and_name() {
+    let root = Root::new("cookies");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Cookies",
+        &format!(
+            "CREATE TABLE cookies(creation_utc INTEGER, host_key TEXT, name TEXT, value TEXT, \
+             path TEXT, expires_utc INTEGER, last_access_utc INTEGER, is_secure INTEGER, is_httponly INTEGER);\
+             INSERT INTO cookies VALUES({WEBKIT_2024}, '.example.com', 'sid', 'abc', '/', 0, {WEBKIT_2024}, 1, 1);"
+        ),
+    );
+    let run = root.evidence("android_cookies");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "host").and_then(Value::as_str),
+        Some(".example.com")
+    );
+}
+
+#[test]
+fn autofill_reads_name_value() {
+    let root = Root::new("autofill");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Web Data",
+        &format!(
+            "CREATE TABLE autofill(date_created INTEGER, name TEXT, value TEXT, \
+             date_last_used INTEGER, count INTEGER);\
+             INSERT INTO autofill VALUES({UNIX_MS_2024}, 'email', 'alice@example.com', {UNIX_MS_2024}, 3);"
+        ),
+    );
+    let run = root.evidence("android_autofill");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(
+        data(record, "value").and_then(Value::as_str),
+        Some("alice@example.com")
+    );
+}
+
+#[test]
+fn calendar_events_read_title() {
+    let root = Root::new("calendar");
+    root.database(
+        "data/data/com.android.providers.calendar/databases/calendar.db",
+        &format!(
+            "CREATE TABLE Calendars(_id INTEGER PRIMARY KEY, calendar_displayName TEXT);\
+             CREATE TABLE Events(_id INTEGER PRIMARY KEY, calendar_id INTEGER, dtstart INTEGER, \
+             dtend INTEGER, eventTimezone TEXT, title TEXT, description TEXT, eventLocation TEXT, organizer TEXT);\
+             INSERT INTO Calendars VALUES(1, 'Work');\
+             INSERT INTO Events VALUES(1, 1, {UNIX_MS_2024}, {UNIX_MS_2024}, 'UTC', 'Meeting', '', 'Room 1', 'alice');"
+        ),
+    );
+    let run = root.evidence("android_calendar");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(data(record, "calendar").and_then(Value::as_str), Some("Work"));
+}
+
+#[test]
+fn keep_notes_read_fts_text() {
+    let root = Root::new("keep");
+    root.database(
+        "data/data/com.google.android.keep/databases/keep.db",
+        &format!(
+            "CREATE TABLE tree_entity(_id INTEGER PRIMARY KEY, time_created INTEGER, \
+             time_last_updated INTEGER, user_edited_timestamp INTEGER, title TEXT, last_modifier_email TEXT);\
+             CREATE TABLE text_search_note_content_content(docid INTEGER, c0text TEXT);\
+             INSERT INTO tree_entity VALUES(1, {UNIX_MS_2024}, {UNIX_MS_2024}, 0, 'Todo', 'a@example.com');\
+             INSERT INTO text_search_note_content_content VALUES(1, 'buy milk');"
+        ),
+    );
+    let run = root.evidence("android_keep_notes");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(data(record, "text").and_then(Value::as_str), Some("buy milk"));
+}
+
+#[test]
+fn maps_places_read_coordinates() {
+    let root = Root::new("maps");
+    root.database(
+        "data/data/com.google.android.apps.maps/databases/gmm_myplaces.db",
+        &format!(
+            "CREATE TABLE sync_item(rowid INTEGER PRIMARY KEY, key_string TEXT, latitude INTEGER, \
+             longitude INTEGER, sync_item BLOB, timestamp INTEGER);\
+             INSERT INTO sync_item VALUES(1, 'Home', 31230400, 121473700, NULL, {UNIX_MS_2024});"
+        ),
+    );
+    let run = root.evidence("android_maps_places");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "latitude").and_then(Value::as_f64),
+        Some(31.2304)
+    );
+}
+
+#[test]
+fn top_sites_read_url_and_rank() {
+    let root = Root::new("top-sites");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Top Sites",
+        "CREATE TABLE top_sites(url TEXT, url_rank INTEGER, title TEXT, redirects INTEGER);\
+         INSERT INTO top_sites VALUES('https://example.com', 1, 'Example', 0);",
+    );
+    let run = root.evidence("android_top_sites");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(
+        data(record, "url").and_then(Value::as_str),
+        Some("https://example.com")
+    );
+}
+
+#[test]
+fn bookmarks_json_walks_url_nodes() {
+    let root = Root::new("bookmarks");
+    let path = root.write(
+        "data/data/com.android.chrome/app_chrome/Default/Bookmarks",
+        &format!(
+            r#"{{"roots":{{"bookmark_bar":{{"type":"folder","name":"Bookmarks bar","children":[{{"type":"url","name":"Example","url":"https://example.com","id":"1","date_added":"{WEBKIT_2024}"}}]}},"other":{{"type":"folder","name":"Other","children":[]}}}}}}"#
+        ),
+    );
+    let run = root.evidence("android_chrome_bookmarks");
+    assert_eq!(run.count("mobile.artifact"), 1);
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "url").and_then(Value::as_str),
+        Some("https://example.com")
+    );
+    let selected = root.selected("android_selected_json", &path);
+    assert_eq!(selected.count("mobile.artifact"), 1);
+}
+
+#[test]
 fn mms_reads_seconds_timestamp_and_addresses() {
     let root = Root::new("mms");
     root.database(

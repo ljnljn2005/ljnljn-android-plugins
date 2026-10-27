@@ -14,6 +14,7 @@ crate-type = ["cdylib", "rlib"]
 lovelycarve-plugin = { path = "../../sdk-v2/sdk" }
 mobile-core = { path = "../../mobile-core" }
 roxmltree = "0.20"
+serde_json = "1"
 
 [dev-dependencies]
 lovelycarve-plugin = { path = "../../sdk-v2/sdk", features = ["testing"] }

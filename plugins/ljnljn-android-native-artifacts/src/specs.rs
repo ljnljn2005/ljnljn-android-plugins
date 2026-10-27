@@ -341,6 +341,256 @@ pub static ANDROID_MEDIA: SqlSpec = SqlSpec {
     }],
 };
 
+static DOWNLOADS: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["downloads"],
+        sql: r#"
+SELECT _id AS download_id, lastmod AS last_modified, title AS title,
+       description AS description, uri AS uri, _data AS path,
+       mimetype AS mime_type, notificationpackage AS package,
+       current_bytes AS current_bytes, total_bytes AS total_bytes,
+       status AS status, errorMsg AS error_message, etag AS etag,
+       is_visible_in_downloads_ui AS visible, deleted AS deleted
+FROM downloads ORDER BY lastmod ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["downloads"],
+        sql: r#"
+SELECT _id AS download_id, lastmod AS last_modified, title AS title,
+       description AS description, uri AS uri, _data AS path,
+       mimetype AS mime_type, NULL AS package, current_bytes AS current_bytes,
+       total_bytes AS total_bytes, status AS status, NULL AS error_message,
+       NULL AS etag, NULL AS visible, NULL AS deleted
+FROM downloads ORDER BY lastmod ASC
+"#,
+    },
+];
+
+static COOKIES: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["cookies"],
+        sql: r#"
+SELECT ROWID AS cookie_id, creation_utc AS creation, host_key AS host,
+       name AS name, value AS value, path AS path, expires_utc AS expires,
+       last_access_utc AS last_access, is_secure AS is_secure,
+       is_httponly AS is_httponly
+FROM cookies ORDER BY last_access_utc ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["cookies"],
+        sql: r#"
+SELECT ROWID AS cookie_id, creation_utc AS creation, host_key AS host,
+       name AS name, value AS value, path AS path, expires_utc AS expires,
+       last_access_utc AS last_access, NULL AS is_secure, NULL AS is_httponly
+FROM cookies ORDER BY last_access_utc ASC
+"#,
+    },
+];
+
+static AUTOFILL: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["autofill"],
+        sql: r#"
+SELECT ROWID AS autofill_id, date_created AS date_created, name AS name,
+       value AS value, date_last_used AS date_last_used, count AS count
+FROM autofill ORDER BY date_last_used ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["autofill"],
+        sql: r#"
+SELECT ROWID AS autofill_id, date_created AS date_created, name AS name,
+       value AS value, NULL AS date_last_used, NULL AS count
+FROM autofill ORDER BY date_created ASC
+"#,
+    },
+];
+
+static CALENDAR: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["Events", "Calendars"],
+        sql: r#"
+SELECT e._id AS event_id, e.dtstart AS start, e.dtend AS end,
+       e.eventTimezone AS timezone, e.title AS title, e.description AS description,
+       e.eventLocation AS location, e.organizer AS organizer,
+       c.calendar_displayName AS calendar
+FROM Events e
+LEFT JOIN Calendars c ON c._id = e.calendar_id
+ORDER BY e.dtstart ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["Events"],
+        sql: r#"
+SELECT _id AS event_id, dtstart AS start, dtend AS end,
+       eventTimezone AS timezone, title AS title, description AS description,
+       eventLocation AS location, organizer AS organizer, NULL AS calendar
+FROM Events ORDER BY dtstart ASC
+"#,
+    },
+];
+
+static KEEP: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["text_search_note_content_content", "tree_entity"],
+        sql: r#"
+SELECT t._id AS note_id, t.time_created AS created,
+       t.time_last_updated AS updated, t.user_edited_timestamp AS edited,
+       t.title AS title, f.c0text AS text, t.last_modifier_email AS modifier
+FROM text_search_note_content_content f
+INNER JOIN tree_entity t ON f.docid = t._id
+ORDER BY t.time_last_updated ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["tree_entity", "list_item"],
+        sql: r#"
+SELECT t._id AS note_id, t.time_created AS created,
+       t.time_last_updated AS updated, t.user_edited_timestamp AS edited,
+       t.title AS title, l.text AS text, t.last_modifier_email AS modifier
+FROM tree_entity t
+LEFT JOIN list_item l ON t._id = l._id
+WHERE t.title IS NOT NULL OR l.text IS NOT NULL
+ORDER BY t.time_last_updated ASC
+"#,
+    },
+];
+
+static MAPS: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["sync_item"],
+    sql: r#"
+SELECT rowid AS place_id, key_string AS key,
+       round(latitude * 0.000001, 6) AS latitude,
+       round(longitude * 0.000001, 6) AS longitude,
+       timestamp AS timestamp
+FROM sync_item ORDER BY timestamp ASC
+"#,
+}];
+
+static TOP_SITES: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["top_sites"],
+    sql: r#"
+SELECT ROWID AS site_id, url AS url, url_rank AS url_rank,
+       title AS title, redirects AS redirects
+FROM top_sites ORDER BY url_rank ASC
+"#,
+}];
+
+pub static ANDROID_DOWNLOADS: SqlSpec = SqlSpec {
+    artifact: "android_downloads",
+    platform: "android",
+    paths: &["**/com.android.providers.downloads/databases/downloads.db"],
+    units: &[SqlUnit {
+        label: "download",
+        variants: DOWNLOADS,
+        time_column: Some("last_modified"),
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["download_id"],
+        title_columns: &["title", "path"],
+    }],
+};
+
+pub static ANDROID_COOKIES: SqlSpec = SqlSpec {
+    artifact: "android_cookies",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Cookies",
+        "**/app_sbrowser/Default/Cookies",
+        "**/app_opera/Cookies",
+        "**/app_webview/Default/Cookies",
+    ],
+    units: &[SqlUnit {
+        label: "cookie",
+        variants: COOKIES,
+        time_column: Some("last_access"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["cookie_id"],
+        title_columns: &["host", "name"],
+    }],
+};
+
+pub static ANDROID_AUTOFILL: SqlSpec = SqlSpec {
+    artifact: "android_autofill",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Web Data",
+        "**/app_sbrowser/Default/Web Data",
+        "**/app_opera/Web Data",
+        "**/app_webview/Default/Web Data",
+    ],
+    units: &[SqlUnit {
+        label: "autofill",
+        variants: AUTOFILL,
+        time_column: Some("date_last_used"),
+        time_kind: TimeKind::Auto,
+        key_columns: &["autofill_id"],
+        title_columns: &["name", "value"],
+    }],
+};
+
+pub static ANDROID_CALENDAR: SqlSpec = SqlSpec {
+    artifact: "android_calendar",
+    platform: "android",
+    paths: &["**/com.android.providers.calendar/databases/calendar.db"],
+    units: &[SqlUnit {
+        label: "event",
+        variants: CALENDAR,
+        time_column: Some("start"),
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["event_id"],
+        title_columns: &["title", "location", "calendar"],
+    }],
+};
+
+pub static ANDROID_KEEP: SqlSpec = SqlSpec {
+    artifact: "android_keep_notes",
+    platform: "android",
+    paths: &["**/com.google.android.keep/databases/keep.db"],
+    units: &[SqlUnit {
+        label: "note",
+        variants: KEEP,
+        time_column: Some("updated"),
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["note_id"],
+        title_columns: &["title", "text"],
+    }],
+};
+
+pub static ANDROID_MAPS: SqlSpec = SqlSpec {
+    artifact: "android_maps_places",
+    platform: "android",
+    paths: &["**/com.google.android.apps.maps/databases/gmm_myplaces.db"],
+    units: &[SqlUnit {
+        label: "place",
+        variants: MAPS,
+        time_column: Some("timestamp"),
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["place_id"],
+        title_columns: &["key", "latitude", "longitude"],
+    }],
+};
+
+pub static ANDROID_TOP_SITES: SqlSpec = SqlSpec {
+    artifact: "android_top_sites",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Top Sites",
+        "**/app_sbrowser/Default/Top Sites",
+        "**/app_opera/Top Sites",
+        "**/app_webview/Default/Top Sites",
+    ],
+    units: &[SqlUnit {
+        label: "site",
+        variants: TOP_SITES,
+        time_column: None,
+        time_kind: TimeKind::UnixMillis,
+        key_columns: &["site_id"],
+        title_columns: &["title", "url"],
+    }],
+};
+
 pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_SMS,
     &ANDROID_CALLS,
@@ -348,4 +598,11 @@ pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_CHROME,
     &ANDROID_WHATSAPP,
     &ANDROID_MEDIA,
+    &ANDROID_DOWNLOADS,
+    &ANDROID_COOKIES,
+    &ANDROID_AUTOFILL,
+    &ANDROID_CALENDAR,
+    &ANDROID_KEEP,
+    &ANDROID_MAPS,
+    &ANDROID_TOP_SITES,
 ];

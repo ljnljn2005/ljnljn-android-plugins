@@ -51,6 +51,62 @@ trigger = "manual"
 category = "android"
 
 [[analyzer]]
+id = "android_downloads"
+name = "下载记录（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_cookies"
+name = "浏览器 Cookies（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_autofill"
+name = "浏览器自动填充（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_calendar"
+name = "日历事件（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_keep_notes"
+name = "Google Keep 便笺（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_maps_places"
+name = "Google 地图地点（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_top_sites"
+name = "浏览器常用站点（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_chrome_bookmarks"
+name = "浏览器书签（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
 id = "android_accounts"
 name = "账号同步配置（检材）"
 scope = "evidence"
@@ -79,3 +135,11 @@ scope = "files"
 trigger = "manual"
 category = "android"
 extensions = ["xml"]
+
+[[analyzer]]
+id = "android_selected_json"
+name = "浏览器书签 JSON（单文件）"
+scope = "files"
+trigger = "manual"
+category = "android"
+extensions = ["json"]
