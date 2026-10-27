@@ -1,0 +1,16 @@
+[package]
+name = "mobile-core"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "Shared native mobile-evidence readers for LovelyCarve LPP v2 plugins"
+publish = false
+
+[dependencies]
+lovelycarve-plugin = { path = "../sdk-v2/sdk" }
+rusqlite = { version = "0.32.1", features = ["bundled"] }
+
+[dev-dependencies]
+lovelycarve-plugin = { path = "../sdk-v2/sdk", features = ["testing"] }
+
+[workspace]

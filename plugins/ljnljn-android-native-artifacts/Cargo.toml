@@ -1,0 +1,31 @@
+[package]
+name = "ljnljn-android-native-artifacts"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "LovelyCarve LPP v2 analyzer: native Android artifact readers"
+publish = false
+
+[lib]
+name = "ljnljn_android_native_artifacts"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+lovelycarve-plugin = { path = "../../sdk-v2/sdk" }
+mobile-core = { path = "../../mobile-core" }
+roxmltree = "0.20"
+
+[dev-dependencies]
+lovelycarve-plugin = { path = "../../sdk-v2/sdk", features = ["testing"] }
+rusqlite = { version = "0.32.1", features = ["bundled"] }
+
+[lints.rust]
+linker_messages = "allow"
+
+[lints.clippy]
+uninlined_format_args = "warn"
+
+[workspace]
+
+[workspace.package]
+license = "AGPL-3.0-only"

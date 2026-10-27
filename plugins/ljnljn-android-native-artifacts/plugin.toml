@@ -1,0 +1,81 @@
+# LPP v2 package manifest. Labels are the Chinese defaults; translations live
+# in locales/<locale>.toml under stable keys.
+id = "org.ljnljn.android-native-artifacts"
+name = "Android 原生工件"
+version = "0.1.0"
+protocol = 2
+library = "ljnljn_android_native_artifacts"
+memory = "512MiB"
+permissions = ["file_materialize"]
+
+[[analyzer]]
+id = "android_sms"
+name = "短信与 MMS（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_calls"
+name = "通话记录（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_contacts"
+name = "通讯录（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_chrome_history"
+name = "Chrome 历史（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_whatsapp"
+name = "WhatsApp 消息（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_media"
+name = "媒体库（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_accounts"
+name = "账号同步配置（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_wifi"
+name = "WiFi 配置（检材）"
+scope = "evidence"
+trigger = "manual"
+category = "android"
+
+[[analyzer]]
+id = "android_selected_databases"
+name = "Android 数据库（单文件）"
+scope = "files"
+trigger = "manual"
+category = "android"
+extensions = ["db", "sqlite"]
+
+[[analyzer]]
+id = "android_selected_xml"
+name = "账号/WiFi XML（单文件）"
+scope = "files"
+trigger = "manual"
+category = "android"
+extensions = ["xml"]

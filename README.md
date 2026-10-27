@@ -7,6 +7,11 @@ Android 取证插件，全部使用 LovelyCarve **LPP v2**（protocol 2）与类
 | --- | --- | --- |
 | `ljnljn-android-packages` | v2 | packages.xml 系统版本与应用清单 |
 | `ljnljn-android-contacts2` | v2 | contacts2.db 通话记录去重统计 |
+| `ljnljn-android-native-artifacts` | v2 | 原生读取短信/MMS、通话、联系人、Chrome、WhatsApp、媒体库、账号同步与 WiFi 配置 |
+
+原生插件直接打开提取物里的数据库/XML，不运行 ALEAPP；共享解析层在
+仓库根目录的 `mobile-core/`。尚未原生覆盖的 ALEAPP 模块仍可用
+`ljnljn-ileapp-aleapp-report` 导入 TSV 报告。
 
 每个插件是独立 Cargo 工程，仓库根目录提供共享 SDK v2：
 

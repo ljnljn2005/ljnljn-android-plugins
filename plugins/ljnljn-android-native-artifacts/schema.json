@@ -1,0 +1,131 @@
+{
+  "protocol": 2,
+  "plugin": "org.ljnljn.android-native-artifacts",
+  "sdk": "0.2.0",
+  "analyzers": [
+    "android_sms",
+    "android_calls",
+    "android_contacts",
+    "android_chrome_history",
+    "android_whatsapp",
+    "android_media",
+    "android_accounts",
+    "android_wifi",
+    "android_selected_databases",
+    "android_selected_xml"
+  ],
+  "filesystems": [],
+  "records": [
+    {
+      "type": "profile.fact",
+      "label": "检材画像",
+      "title": "{key}",
+      "fields": [
+        {
+          "id": "key",
+          "label": "键",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "value",
+          "label": "值",
+          "kind": "json"
+        },
+        {
+          "id": "system",
+          "label": "系统",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "type": "mobile.artifact",
+      "label": "移动终端工件",
+      "title": "{artifact} · {title}",
+      "fields": [
+        {
+          "id": "platform",
+          "label": "平台",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "artifact",
+          "label": "工件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "source",
+          "label": "来源",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "record_key",
+          "label": "记录键",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "time",
+          "label": "时间",
+          "kind": "timestamp",
+          "timeline": "mobile"
+        },
+        {
+          "id": "title",
+          "label": "标题",
+          "kind": "text"
+        },
+        {
+          "id": "data",
+          "label": "数据",
+          "kind": "json"
+        }
+      ]
+    },
+    {
+      "type": "mobile.artifact.file",
+      "label": "移动终端工件文件",
+      "title": "{artifact} · {status}",
+      "fields": [
+        {
+          "id": "platform",
+          "label": "平台",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "artifact",
+          "label": "工件",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "source",
+          "label": "来源",
+          "kind": "text",
+          "key": true
+        },
+        {
+          "id": "status",
+          "label": "状态",
+          "kind": "text"
+        },
+        {
+          "id": "rows",
+          "label": "数据行数",
+          "kind": "int"
+        },
+        {
+          "id": "detail",
+          "label": "说明",
+          "kind": "text"
+        }
+      ]
+    }
+  ],
+  "schema_hash": "fnv1a64:3c861ab7ac48a4df"
+}
