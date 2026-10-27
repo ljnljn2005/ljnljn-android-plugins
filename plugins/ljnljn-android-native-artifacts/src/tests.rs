@@ -272,6 +272,90 @@ fn bookmarks_json_walks_url_nodes() {
 }
 
 #[test]
+fn login_data_reads_origin_and_username() {
+    let root = Root::new("login-data");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Login Data",
+        &format!(
+            "CREATE TABLE logins(origin_url TEXT, username_value TEXT, password_value BLOB, \
+             date_created INTEGER, blacklisted_by_user INTEGER, signon_realm TEXT);\
+             INSERT INTO logins VALUES('https://example.com', 'alice', X'763130', {WEBKIT_2024}, 0, 'https://example.com');"
+        ),
+    );
+    let run = root.evidence("android_login_data");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "username").and_then(Value::as_str),
+        Some("alice")
+    );
+    assert_eq!(
+        data(record, "password_blob").and_then(Value::as_str),
+        Some("<blob 3 bytes>")
+    );
+}
+
+#[test]
+fn credit_cards_join_metadata() {
+    let root = Root::new("cards");
+    root.database(
+        "data/data/com.android.chrome/app_chrome/Default/Web Data",
+        &format!(
+            "CREATE TABLE masked_credit_cards(id TEXT PRIMARY KEY, name_on_card TEXT, network TEXT, \
+             last_four TEXT, exp_month INTEGER, exp_year INTEGER, bank_name TEXT, nickname TEXT);\
+             CREATE TABLE server_card_metadata(id TEXT, use_date INTEGER, use_count INTEGER);\
+             INSERT INTO masked_credit_cards VALUES('c1', 'ALICE WANG', 'VISA', '4242', 12, 2030, 'Bank', 'Personal');\
+             INSERT INTO server_card_metadata VALUES('c1', {WEBKIT_2024}, 4);"
+        ),
+    );
+    let run = root.evidence("android_credit_cards");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(
+        data(record, "last_four").and_then(Value::as_str),
+        Some("4242")
+    );
+    assert_eq!(data(record, "use_count").and_then(Value::as_i64), Some(4));
+}
+
+#[test]
+fn firefox_cookies_read_host_and_name() {
+    let root = Root::new("firefox");
+    root.database(
+        "data/data/org.mozilla.firefox/files/mozilla/abc.default/cookies.sqlite",
+        &format!(
+            "CREATE TABLE moz_cookies(id INTEGER PRIMARY KEY, lastAccessed INTEGER, creationTime INTEGER, \
+             host TEXT, name TEXT, value TEXT, expiry INTEGER, path TEXT);\
+             INSERT INTO moz_cookies VALUES(1, {}, {}, '.example.com', 'sid', 'abc', 0, '/');",
+            UNIX_MS_2024 * 1000,
+            UNIX_MS_2024 * 1000
+        ),
+    );
+    let run = root.evidence("android_firefox_cookies");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("time"), Some("2024-01-01T00:00:00Z"));
+    assert_eq!(
+        data(record, "host").and_then(Value::as_str),
+        Some(".example.com")
+    );
+}
+
+#[test]
+fn wifi_hotspot_reads_softap_xml() {
+    let root = Root::new("hotspot");
+    root.write(
+        "data/misc/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml",
+        r#"<WifiConfigStoreData><SoftAp><string name="SSID">MyAP</string><string name="Passphrase">secret</string><int name="SecurityType" value="1" /></SoftAp></WifiConfigStoreData>"#,
+    );
+    let run = root.evidence("android_wifi_hotspot");
+    let record = run.of_type("mobile.artifact")[0];
+    assert_eq!(record.text("title"), Some("MyAP"));
+    assert_eq!(
+        data(record, "passphrase").and_then(Value::as_str),
+        Some("secret")
+    );
+}
+
+#[test]
 fn mms_reads_seconds_timestamp_and_addresses() {
     let root = Root::new("mms");
     root.database(

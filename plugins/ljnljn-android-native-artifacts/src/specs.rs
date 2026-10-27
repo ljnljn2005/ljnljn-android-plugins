@@ -591,6 +591,115 @@ pub static ANDROID_TOP_SITES: SqlSpec = SqlSpec {
     }],
 };
 
+static LOGIN_DATA: &[SqlVariant] = &[SqlVariant {
+    required_tables: &["logins"],
+    sql: r#"
+SELECT ROWID AS login_id, origin_url AS origin_url,
+       username_value AS username, password_value AS password_blob,
+       date_created AS date_created, blacklisted_by_user AS blacklisted,
+       signon_realm AS signon_realm
+FROM logins ORDER BY date_created ASC
+"#,
+}];
+
+static CREDIT_CARDS: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["masked_credit_cards", "server_card_metadata"],
+        sql: r#"
+SELECT c.id AS card_id, c.name_on_card AS name_on_card, c.network AS network,
+       c.last_four AS last_four, c.exp_month AS exp_month, c.exp_year AS exp_year,
+       c.bank_name AS bank_name, c.nickname AS nickname,
+       m.use_date AS last_used, m.use_count AS use_count
+FROM masked_credit_cards c
+LEFT JOIN server_card_metadata m ON m.id = c.id
+ORDER BY m.use_date ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["masked_credit_cards"],
+        sql: r#"
+SELECT id AS card_id, name_on_card AS name_on_card, network AS network,
+       last_four AS last_four, exp_month AS exp_month, exp_year AS exp_year,
+       bank_name AS bank_name, nickname AS nickname,
+       NULL AS last_used, NULL AS use_count
+FROM masked_credit_cards ORDER BY id ASC
+"#,
+    },
+];
+
+static FIREFOX_COOKIES: &[SqlVariant] = &[
+    SqlVariant {
+        required_tables: &["moz_cookies"],
+        sql: r#"
+SELECT ROWID AS cookie_id, lastAccessed AS last_accessed,
+       creationTime AS created, host AS host, name AS name, value AS value,
+       expiry AS expiry, path AS path
+FROM moz_cookies ORDER BY lastAccessed ASC
+"#,
+    },
+    SqlVariant {
+        required_tables: &["moz_cookies"],
+        sql: r#"
+SELECT ROWID AS cookie_id, lastAccessed AS last_accessed,
+       NULL AS created, host AS host, name AS name, value AS value,
+       expiry AS expiry, path AS path
+FROM moz_cookies ORDER BY lastAccessed ASC
+"#,
+    },
+];
+
+pub static ANDROID_LOGIN_DATA: SqlSpec = SqlSpec {
+    artifact: "android_login_data",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Login Data",
+        "**/app_sbrowser/Default/Login Data",
+        "**/app_opera/Login Data",
+        "**/app_webview/Default/Login Data",
+    ],
+    units: &[SqlUnit {
+        label: "login",
+        variants: LOGIN_DATA,
+        time_column: Some("date_created"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["login_id"],
+        title_columns: &["origin_url", "username"],
+    }],
+};
+
+pub static ANDROID_CREDIT_CARDS: SqlSpec = SqlSpec {
+    artifact: "android_credit_cards",
+    platform: "android",
+    paths: &[
+        "**/app_chrome/Default/Web Data",
+        "**/app_sbrowser/Default/Web Data",
+        "**/app_opera/Web Data",
+        "**/app_webview/Default/Web Data",
+    ],
+    units: &[SqlUnit {
+        label: "card",
+        variants: CREDIT_CARDS,
+        time_column: Some("last_used"),
+        time_kind: TimeKind::WebkitMicros,
+        key_columns: &["card_id"],
+        title_columns: &["name_on_card", "last_four"],
+    }],
+};
+
+pub static ANDROID_FIREFOX_COOKIES: SqlSpec = SqlSpec {
+    artifact: "android_firefox_cookies",
+    platform: "android",
+    paths: &["**/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite"],
+    units: &[SqlUnit {
+        label: "cookie",
+        variants: FIREFOX_COOKIES,
+        time_column: Some("last_accessed"),
+        time_kind: TimeKind::UnixMicros,
+        key_columns: &["cookie_id"],
+        title_columns: &["host", "name"],
+    }],
+};
+
 pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_SMS,
     &ANDROID_CALLS,
@@ -605,4 +714,7 @@ pub static ANDROID_SPECS: &[&SqlSpec] = &[
     &ANDROID_KEEP,
     &ANDROID_MAPS,
     &ANDROID_TOP_SITES,
+    &ANDROID_LOGIN_DATA,
+    &ANDROID_CREDIT_CARDS,
+    &ANDROID_FIREFOX_COOKIES,
 ];

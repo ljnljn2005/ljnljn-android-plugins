@@ -5,6 +5,7 @@
 //! executes text stored in the evidence and never writes to a database.
 
 mod chrome_bookmarks;
+mod hotspot;
 mod specs;
 mod xml;
 
@@ -70,6 +71,22 @@ fn chrome_bookmarks(run: &Run) -> Result<()> {
     chrome_bookmarks::run_evidence(run)
 }
 
+fn login_data(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_LOGIN_DATA)
+}
+
+fn credit_cards(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_CREDIT_CARDS)
+}
+
+fn firefox_cookies(run: &Run) -> Result<()> {
+    run_evidence(run, &specs::ANDROID_FIREFOX_COOKIES)
+}
+
+fn wifi_hotspot(run: &Run) -> Result<()> {
+    hotspot::run_evidence(run)
+}
+
 fn accounts(run: &Run) -> Result<()> {
     xml::accounts_evidence(run)
 }
@@ -108,6 +125,10 @@ fn plugin() -> Plugin {
         .analyzer("android_maps_places", maps_places)
         .analyzer("android_top_sites", top_sites)
         .analyzer("android_chrome_bookmarks", chrome_bookmarks)
+        .analyzer("android_login_data", login_data)
+        .analyzer("android_credit_cards", credit_cards)
+        .analyzer("android_firefox_cookies", firefox_cookies)
+        .analyzer("android_wifi_hotspot", wifi_hotspot)
         .analyzer("android_accounts", accounts)
         .analyzer("android_wifi", wifi)
         .analyzer("android_selected_databases", selected_databases)

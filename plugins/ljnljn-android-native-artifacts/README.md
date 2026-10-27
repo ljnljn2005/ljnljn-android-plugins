@@ -25,6 +25,10 @@ LovelyCarve **LPP v2** 插件：直接读取 Android 提取物中的核心应用
 | `android_maps_places` | `gmm_myplaces.db` | 地点键、经纬度、时间 |
 | `android_top_sites` | 浏览器 `Top Sites` | URL、排名、标题、跳转 |
 | `android_chrome_bookmarks` | 浏览器 `Bookmarks` JSON | URL、名称、父目录、路径、添加时间 |
+| `android_login_data` | 浏览器 `Login Data` | 来源、用户名、密码密文长度、创建时间、signon realm |
+| `android_credit_cards` | 浏览器 `Web Data` 的 `masked_credit_cards` | 卡名、网络、后四位、有效期、使用次数/时间 |
+| `android_firefox_cookies` | Firefox `cookies.sqlite` | 域、名称、值、路径、创建/访问时间 |
+| `android_wifi_hotspot` | `softap.conf`、`WifiConfigStoreSoftAp.xml` | 热点 SSID、口令、安全类型 |
 | `android_accounts` | `system/sync/accounts.xml` | 账号、类型、authority、enabled、syncable |
 | `android_wifi` | `WifiConfigStore.xml` | SSID、安全模式、预共享密钥、上次连接时间 |
 
